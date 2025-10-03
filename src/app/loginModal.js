@@ -32,6 +32,7 @@ export default function LoginModal({ isOpen, onClose, setUser }) {
         Cookies.set("token", data.token, { expires: 1 });
         setUser({ email: data.email, nomUsuario: data.nomUsuario });
         onClose();
+        window.location.reload()
       } else {
         alert(data.message);
       }

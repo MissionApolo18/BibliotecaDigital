@@ -42,9 +42,9 @@ export default function RegisterForm({ setUser }) {
 
         // Redirigir según rol
         if (data.rol === 'admin') {
-          window.location.href = '/dash/admin';
+          window.location.href = '/';
         } else {
-          window.location.href = '/dash/user';
+          window.location.href = '/';
         }
       } else {
         setError(data.error || "Error al registrar");

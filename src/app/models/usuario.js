@@ -3,7 +3,7 @@ export const UsuarioSchema = {
   nombre: String,
   apellido: String,
   nomUsuario: String,
-  password: String,
-  rol: {type:String, default: "user"},
+  contrasena: String,
+  rol: String,
   correo: String,
 };

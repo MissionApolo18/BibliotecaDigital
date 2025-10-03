@@ -1,53 +1,33 @@
-import clientPromise from "../../../lib/mongodb";
+import clientPromise from "../../../lib/mongodb"; 
+import { LibroSchema } from "../../models/libro";
 
-export const POST = async (req) => {
+export async function GET() {
   try {
-    const { titulo, ISBN, autorId, anno, editorialId, idioma, categoriaId, fechaCarga, vistas, formato, paginas } =
-      await req.json();
-
-    // Validación mínima
-    if (!titulo || !ISBN || !autorId) {
-      return new Response(JSON.stringify({ error: "Título, ISBN y autor son obligatorios" }), { status: 400 });
-    }
-
     const client = await clientPromise;
-    const db = client.db("biblioteca");
+    const db = client.db("biblioteca"); 
+    const libros = await db.collection("libros").find({}).toArray();
 
-    const nuevoLibro = {
-      titulo,
-      ISBN,
-      autorId,
-      anno,
-      editorialId,
-      idioma,
-      categoriaId,
-      fechaCarga: fechaCarga ? new Date(fechaCarga) : new Date(),
-      vistas: vistas || 0,
-      formato,
-      paginas,
-    };
+    const librosFormateados = libros.map(l => ({
+      idLibro: l.idLibro,
+      ISBN: l.ISBN,
+      autorId: l.autorId,
+      anno: l.anno,
+      titulo: l.titulo,
+      editorialId: l.editorialId,
+      idioma: l.idioma,
+      categoriaId: l.categoriaId,
+      fechaCarga: l.fechaCarga,
+      vistas: l.vistas,
+      formato: l.formato,
+      paginas: l.paginas,
+    }));
 
-    const result = await db.collection("libros").insertOne(nuevoLibro);
-
-    return new Response(JSON.stringify({ message: "Libro agregado", libroId: result.insertedId }), {
-      status: 201,
+    return new Response(JSON.stringify(librosFormateados), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ error: "Error en servidor" }), { status: 500 });
+    return new Response(JSON.stringify({ error: "No se pudieron cargar los libros" }), { status: 500 });
   }
-};
-
-export const GET = async () => {
-  try {
-    const client = await clientPromise;
-    const db = client.db("BibliotecaDigital");
-
-    const libros = await db.collection("libros").find({}).toArray();
-
-    return new Response(JSON.stringify(libros), { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return new Response(JSON.stringify({ error: "Error al obtener libros" }), { status: 500 });
-  }
-};
+}

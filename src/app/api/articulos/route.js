@@ -1,4 +1,5 @@
 import clientPromise from "../../../lib/mongodb";
+import { ArticuloSchema } from "../../models/articulo";
 
 export const POST = async (req) => {
   try {
